@@ -1,0 +1,24 @@
+* readme
+
+Some shared infrastructure configuration for my GCP project.
+
+** commands
+:PROPERTIES:
+:header-args:shell: :results output
+:END:
+
+#+begin_src shell
+  terraform init -upgrade -no-color
+#+end_src
+
+#+begin_src shell :results output
+  terraform plan -no-color -var-file private.tfvars 
+#+end_src
+
+#+begin_src shell
+  terraform apply -no-color -var-file private.tfvars -auto-approve
+#+end_src
+
+#+begin_src shell
+  gcloud kms locations list
+#+end_src
