@@ -7,9 +7,17 @@ terraform {
   }
 }
 
+locals {
+  region   = "us-central1"
+  zone     = "us-central1-c"
+  location = "us-central"
+  project  = "davidshen84"
+}
+
 provider "google" {
   project = "davidshen84"
-  region  = "us-central"
+  region  = local.region
+  zone    = local.zone
 }
 
 resource "google_project" "davidshen84" {
@@ -29,7 +37,7 @@ resource "google_project_iam_policy" "davidshen84" {
 
 resource "google_app_engine_application" "davidshen84" {
   project     = google_project.davidshen84.project_id
-  location_id = "us-central"
+  location_id = local.location
 
   iap {
     enabled              = true
@@ -41,7 +49,7 @@ resource "google_app_engine_application" "davidshen84" {
 resource "google_storage_bucket" "app-engine-buckets" {
   for_each                 = toset(["davidshen84.appspot.com", "staging.davidshen84.appspot.com", "us.artifacts.davidshen84.appspot.com"])
   name                     = each.key
-  location                 = "US-CENTRAL1"
+  location                 = local.region
   force_destroy            = true
   public_access_prevention = "enforced"
 
@@ -54,7 +62,7 @@ resource "google_storage_bucket" "app-engine-buckets" {
 
 resource "google_kms_key_ring" "default" {
   name     = "default"
-  location = "us-central1"
+  location = local.region
 }
 
 resource "google_kms_crypto_key" "tfstate-key" {
@@ -82,7 +90,7 @@ resource "random_id" "bucket-prefix" {
 resource "google_storage_bucket" "secured-bucket" {
   name                     = "${random_id.bucket-prefix.hex}-tfstate"
   force_destroy            = false
-  location                 = "US-CENTRAL1"
+  location                 = local.region
   storage_class            = "STANDARD"
   public_access_prevention = "enforced"
 
