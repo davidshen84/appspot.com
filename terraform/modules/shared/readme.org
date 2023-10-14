@@ -1,0 +1,3 @@
+* readme
+
+This shared TF module defines some common infrastructure resources.
