@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 5.1.0"
+      version = ">= 5.3.0"
     }
   }
 }
@@ -12,12 +12,6 @@ locals {
   zone     = "us-central1-c"
   location = "us-central"
   project  = "davidshen84"
-}
-
-provider "google" {
-  project = "davidshen84"
-  region  = local.region
-  zone    = local.zone
 }
 
 resource "google_project" "davidshen84" {
@@ -105,4 +99,29 @@ resource "google_storage_bucket" "secured-bucket" {
   depends_on = [
     google_kms_crypto_key_iam_binding.tfstate-key-binding
   ]
+}
+
+resource "google_artifact_registry_repository" "default" {
+  provider      = google-beta
+  repository_id = "default"
+  location      = local.region
+  format        = "DOCKER"
+
+  cleanup_policies {
+    id     = "default-old-images"
+    action = "DELETE"
+
+    condition {
+      older_than = "1314000s"
+    }
+  }
+
+  cleanup_policies {
+    id     = "keep-recent-2-versions"
+    action = "KEEP"
+
+    most_recent_versions {
+      keep_count = 2
+    }
+  }
 }

@@ -210,4 +210,19 @@ data "google_iam_policy" "project-iam" {
     ]
     role = "roles/sourcerepo.serviceAgent"
   }
+
+  binding {
+    role = "roles/artifactregistry.admin"
+    members = [
+      "user:davidshen84@gmail.com",
+      "serviceAccount:43274281830@cloudbuild.gserviceaccount.com"
+    ]
+  }
+
+  binding {
+    role = "roles/artifactregistry.serviceAgent"
+    members = [
+      "serviceAccount:service-43274281830@gcp-sa-artifactregistry.iam.gserviceaccount.com",
+    ]
+  }
 }
